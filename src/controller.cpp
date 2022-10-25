@@ -127,6 +127,10 @@ void opcontrol() {
         intake_motor.move_velocity(0);  
         **/
           
+        //pros::Task leftBDrive(leftBackDrive);
+        //pros::Task leftFDrive(leftFrontDrive);
+        //pros::Task rightBDrive(rightBackDrive);
+        //pros::Task rightFDrive(rightFrontDrive);  
         pros::Task drive(driveTask);
 
         //pros::Task intake(intakeTask);
@@ -134,10 +138,7 @@ void opcontrol() {
         //pros::Task intakeO(intakeOut);
         pros::Task intakeC(intakeController);
 
-        //pros::Task leftBDrive(leftBackDrive);
-        //pros::Task leftFDrive(leftFrontDrive);
-        //pros::Task rightBDrive(rightBackDrive);
-        //pros::Task rightFDrive(rightFrontDrive);
+        
 
         pros::delay(2);
     }
