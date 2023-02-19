@@ -13,8 +13,9 @@ extern motor ShootFar;
 extern controller Controller1;
 extern motor Lift;
 extern limit LimitSwitchFar;
-extern limit LimitSwitchClose;
+extern limit LimitSwitchIntake;
 extern inertial Inertial;
+extern encoder EncoderC;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

@@ -18,8 +18,9 @@ motor ShootFar = motor(PORT7, ratio18_1, false);
 controller Controller1 = controller(primary);
 motor Lift = motor(PORT8, ratio18_1, false);
 limit LimitSwitchFar = limit(Brain.ThreeWirePort.A);
-limit LimitSwitchClose = limit(Brain.ThreeWirePort.B);
+limit LimitSwitchIntake = limit(Brain.ThreeWirePort.B);
 inertial Inertial = inertial(PORT12);
+encoder EncoderC = encoder(Brain.ThreeWirePort.C);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable
