@@ -139,6 +139,7 @@ void stopDiscs() {
 }
 
 //lift arm up task
+/*
 int liftArmIntake() {
   Brain.Screen.setCursor(1, 1);
   Brain.Screen.print("lift intake thread");
@@ -146,18 +147,20 @@ int liftArmIntake() {
       while(!(LimitSwitchIntake.pressing())) {
         Lift.spin(forward);
       }
-      Lift.stop();
+      Lift.stop(brake);
     }
   else {
-    Lift.stop();
+    Lift.stop(brake);
   }
   return 0;
 }
+*/
 
 //lift arm down task
+/*
 int liftArmFar() {
   Brain.Screen.setCursor(2, 1);
-  Brain.Screen.print("lift arm thread");
+  Brain.Screen.print("lift far thread");
   if (Controller1.ButtonB.pressing()) {
       while(!(LimitSwitchFar.pressing())) {
         Lift.spin(reverse);
@@ -165,10 +168,11 @@ int liftArmFar() {
       Lift.stop(brake);
     }
   else {
-    Lift.stop();
+    Lift.stop(brake);
   }
   return 0;
 }
+*/
 
 //PI Controller to move forward and back
 void pi(int endValue) {  
@@ -270,8 +274,8 @@ void autonomous(void) {
   }
   stopAll(brake);  
   */
-  driveAllFor(reverse, 630);
-  wait(0.3, sec);
+  driveAllFor(reverse, 660);
+  wait(0.25, sec);
   IntakeMotor.stop(brake);
 
   //pick up corner disc and roll roller
@@ -279,7 +283,7 @@ void autonomous(void) {
   turnRightInertial(85);
   IntakeMotor.spin(forward);
   driveAllFor(reverse, 1650);
-  wait(0.3, sec);
+  wait(0.5, sec);
   IntakeMotor.stop(brake);
   driveAllFor(forward, 650); //500 --> 550 --> 650
   
@@ -371,8 +375,8 @@ void usercontrol(void) {
   IntakeMotor.setVelocity(100, percent);
 
   //define tasks
-  liftArmFarTask = vex::task(liftArmFar);
-  liftArmIntakeTask = vex::task(liftArmIntake);
+  //liftArmFarTask = vex::task(liftArmFar);
+  //liftArmIntakeTask = vex::task(liftArmIntake);
 
  
   // place driver control in this while loop
@@ -430,7 +434,7 @@ void usercontrol(void) {
         v = 10;
       }
       ShootClose.spin(forward, v, volt); //7
-      ShootFar.spin(reverse, v, volt); //7
+      ShootFar.spin(forward, v, volt); //7
       v = 6.25;
       
     }
@@ -452,38 +456,44 @@ void usercontrol(void) {
     */
 
     //lift manual up (rebinded to X and B until lift can move with sensors without stopping everything else)
+    //far
     if (Controller1.ButtonX.pressing()) {
       Lift.spin(forward);
-    } else if (Controller1.ButtonB.pressing()){
+    } 
+    //intake
+    else if (Controller1.ButtonB.pressing()){
       Lift.spin(reverse);
-    } else {
+    } 
+    else {
       Lift.stop();
     }
 
     //moving the lift to the limit sensors
-    if (Controller1.ButtonX.pressing()) {
+    /*
+    if (Controller1.ButtonY.pressing()) {
       while(!(LimitSwitchFar.pressing())) {
-        Lift.spin(reverse);
+        Lift.spin(forward);
       }
       Lift.stop(brake);
     }
     if (Controller1.ButtonA.pressing()) {
       while(!(LimitSwitchIntake.pressing())) {
-        Lift.spin(forward);
+        Lift.spin(reverse);
       }
       Lift.stop();
     }
+    */
 
     //distance shoot
     if (Controller1.ButtonR2.pressing()) {
       ShootClose.spin(forward, 12, volt);
-      ShootFar.spin(reverse, 12, volt);
+      ShootFar.spin(forward, 12, volt);
     }
 
     //flywheel spins backwards to activate endgame
     if (Controller1.ButtonUp.pressing()) {
       ShootClose.spin(forward, -12, volt);
-      ShootFar.spin(reverse, -12, volt);
+      ShootFar.spin(forward, -12, volt);
     }
 
     wait(20, msec); // Sleep the task for a short amount of time to
@@ -501,6 +511,9 @@ int main() {
 
   // Run the pre-autonomous function.
   pre_auton();
+
+  //Lift.spinFor(forward, 3, degrees);
+  Lift.stop(brake);
 
   // Prevent main from exiting with an infinite loop.
   while (true) {
