@@ -1,9 +1,18 @@
+/*----------------------------------------------------------------------------*/
+/*                                                                            */
+/*    Module:       main.cpp                                                  */
+/*    Author:       VEX                                                       */
+/*    Created:      Thu Sep 26 2019                                           */
+/*    Description:  Competition Template                                      */
+/*                                                                            */
+/*----------------------------------------------------------------------------*/
+
 // ---- START VEXCODE CONFIGURED DEVICES ----
 // Robot Configuration:
 // [Name]               [Type]        [Port(s)]
 // LBdrive              motor         1               
 // LFdrive              motor         11              
-// RBdrive              motor         2               
+// RBdrive              motor         3               
 // RFdrive              motor         4               
 // IntakeMotor          motor         5               
 // ShootClose           motor         6               
@@ -15,14 +24,6 @@
 // LimitSwitchIntake    limit         B               
 // ShaftEncoderFlywheel encoder       C, D            
 // ---- END VEXCODE CONFIGURED DEVICES ----
-/*----------------------------------------------------------------------------*/
-/*                                                                            */
-/*    Module:       main.cpp                                                  */
-/*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
-/*    Description:  Competition Template                                      */
-/*                                                                            */
-/*----------------------------------------------------------------------------*/
 
 #include "vex.h"
 #include <cmath>
@@ -219,193 +220,61 @@ int resetLiftIntake() {
   return 0;
 }
 
-
 void autonomous(void) {
-  //initialize lift task
+  //setDrivePercentage(35);
+  
   task liftFarTask = task(resetLiftFar);
   liftFarTask.suspend();
   task liftIntakeTask = task(resetLiftIntake);
   liftIntakeTask.suspend();
-  
-  //resetLiftIntake();
 
-  //roll first roller
+  //liftIntakeTask.resume();
+
+  //spin the roller
   driveAll(reverse);
-  wait(0.75, sec);
-  stopAll(brake);
-  IntakeMotor.spin(reverse);
-  wait(0.3, sec);
-  IntakeMotor.stop(brake);
-
-  //pick up corner disc and roll second roller
-  driveAllFor(forward, 1250);
-  IntakeMotor.spinFor(forward, 300, degrees);
-  turnRightInertial(91);
-  IntakeMotor.spin(reverse);
-  driveAll(reverse);
-  wait(1.5, sec);
-  stopAll(brake);
-  wait(0.7, sec);
-  IntakeMotor.stop(brake);
-  driveAll(reverse);
-  IntakeMotor.spin(reverse);
-  wait(0.5, sec); //configure at comp
-  stopAll(brake);
-  IntakeMotor.stop(brake);
-
-  //shoot all 3 discs
-  driveAllFor(forward, 650);
-  liftFarTask.resume();
-  turnLeftInertial(84);
-  IntakeMotor.spinFor(forward, 150, degrees); //75 --> 150
-  driveAll(forward);
-  wait(1.7, sec);
-  Lift.spin(forward);
-  wait(0.1, sec);
-  Lift.stop(hold);
-  stopAll(brake);
-
-  //turnRightInertial(4);
-
-  shootDiscs(10.5);
-  wait(2.6, sec);
-  IntakeMotor.spinFor(reverse, 500, degrees);
   wait(0.2, sec);
-  IntakeMotor.spinFor(reverse, 650, degrees);
-  wait(0.2, sec);
-  IntakeMotor.spinFor(reverse, 950, degrees);
-  stopDiscs();
-
-  //turnLeftInertial(4);
-
-  liftFarTask.suspend();
-  liftIntakeTask.resume();
-
-  //pick up 3 discs in a row and shoot them
-  driveAllFor(reverse, 1350);
-  turnLeftInertial(126);
-
-  IntakeMotor.spin(reverse);
-  driveAllFor(reverse, 4500);
-  IntakeMotor.stop(brake);
-
-  turnRightInertial(66);
-  IntakeMotor.spinFor(forward, 100, degrees);
-  shootDiscs(10.3);
-  Lift.spin(reverse);
-  wait(0.95, sec);
-  Lift.stop(brake);
-  wait(1, sec);
-  IntakeMotor.spinFor(reverse, 2100, degrees);
-  stopDiscs();
-
-  //get 3 stack of discs
-  liftIntakeTask.suspend();
-  liftIntakeTask.resume();
-
-  //added while loop bc task doesn't work???
-  while(!(LimitSwitchIntake.pressing())) {
-    Lift.spin(forward);
-  }
-  Lift.stop(brake);
-
-  turnLeftInertial(65);
-  IntakeMotor.spin(reverse);
-  driveAllFor(reverse, 3150);
-  IntakeMotor.stop(brake);
-  driveAllFor(forward, 150);
-
-  //shoot 3 stack of discs
-  liftIntakeTask.suspend();
-  liftFarTask.resume();
-  turnRightInertial(31);
-  IntakeMotor.spinFor(forward, 75, degrees);
-  driveAll(forward);
-  wait(1.7, sec);
-  Lift.spin(forward);
-  wait(0.1, sec);
-  Lift.stop(hold);
   stopAll(brake);
-
-  shootDiscs(8);
-  wait(2.6, sec);
-  IntakeMotor.spinFor(reverse, 500, degrees);
-  wait(0.3, sec);
-  IntakeMotor.spinFor(reverse, 650, degrees);
-  wait(0.2, sec);
-  IntakeMotor.spinFor(reverse, 950, degrees);
-  stopDiscs();
-  
-  //go back to roller and spin roller
-  liftFarTask.suspend();
-  liftIntakeTask.resume();
-
-  driveAll(reverse);
-  wait(2.35, sec);
-  stopAll(brake);
-  
-  turnLeftInertial(80);
-
-  driveAll(reverse);
-  wait(1, sec);
-  stopAll(brake);
-  IntakeMotor.spin(reverse);
-  wait(0.3, sec);
-  IntakeMotor.stop(brake);
-  
-  //pick up corner disc and spin other roller
-  driveAllFor(forward, 1050);
-  turnRightInertial(80);
-  
-  IntakeMotor.spin(reverse);
-  driveAll(reverse);
-  wait(1.5, sec);
-  IntakeMotor.stop(brake);
-  stopAll(brake);
-  IntakeMotor.spin(reverse);
-  wait(0.3, sec);
-  IntakeMotor.stop(brake);
-  stopAll(brake);
-
-  //pick up 3 stray discs
-  driveAllFor(forward, 500);
   IntakeMotor.spin(forward);
-  turnRightInertial(81);
-  driveAllFor(reverse, 1250);
-  turnRightInertial(34);
-  IntakeMotor.stop(brake);
-  IntakeMotor.spin(reverse);
-  driveAllFor(reverse, 4500);
+  wait(0.16, sec);
   IntakeMotor.stop(brake);
 
-  //shoot 3 discs
-  turnRightInertial(65);
-  IntakeMotor.spinFor(forward, 100, degrees);
-  shootDiscs(10.25);
-  Lift.spin(reverse);
-  wait(0.95, sec);
-  Lift.stop(brake);
-  wait(1, sec);
-  IntakeMotor.spinFor(reverse, 2100, degrees);
-  stopDiscs();
-  
-  liftIntakeTask.suspend();
+  //liftIntakeTask.suspend();
   liftFarTask.resume();
-
-  //go back and endgame
-  turnLeftInertial(65);
-  setDrivePercentage(100);
-  shootDiscs(-12);
-  resetLiftIntake();
+    
+  //shoot the discs
+  shootDiscs(12);
   driveAll(forward);
-  wait(1.27, sec);
+  wait(.35, sec);
   stopAll(brake);
-  turnRightInertial(6);
+  wait(0.15,sec);
+
+  turnLeftInertial(7);
+  wait(3.5, sec);
+  IntakeMotor.spinFor(reverse, 500, degrees);
+  wait(1.5, sec);
+  IntakeMotor.spinFor(reverse, 950, degrees);
+  stopDiscs();
+
+  liftFarTask.suspend();
+  liftIntakeTask.resume();
+
+  //turn and get discs
+  turnRightInertial(7);
+  driveAll(reverse);
+  wait(0.35, sec);
+  stopAll(brake);
+  turnLeftInertial(130);
+
+  IntakeMotor.spin(reverse);
+  wait(0.5, sec);
+  driveAllFor(reverse, 3000);
+  wait(.25, sec);
+  IntakeMotor.stop(brake);
 }
 
 void usercontrol(void) {
-
-double turnImportance = 0.5;
+  
+  double turnImportance = 0.5;
 
   //initialize sensors and motor speeds
   Lift.setPosition(0, degrees);
@@ -531,6 +400,9 @@ double turnImportance = 0.5;
   }
 }
 
+//
+// Main will set up the competition functions and callbacks.
+//
 int main() {
   // Set up callbacks for autonomous and driver control periods.
   Competition.autonomous(autonomous);

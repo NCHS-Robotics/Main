@@ -9,8 +9,8 @@ brain  Brain;
 
 // VEXcode device constructors
 motor LBdrive = motor(PORT1, ratio6_1, false);
-motor LFdrive = motor(PORT11, ratio6_1, false);
-motor RBdrive = motor(PORT2, ratio6_1, true);
+motor LFdrive = motor(PORT11, ratio18_1, false);
+motor RBdrive = motor(PORT3, ratio6_1, true);
 motor RFdrive = motor(PORT4, ratio6_1, true);
 motor IntakeMotor = motor(PORT5, ratio18_1, false);
 motor ShootClose = motor(PORT6, ratio18_1, false);
