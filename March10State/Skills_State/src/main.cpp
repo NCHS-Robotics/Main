@@ -49,6 +49,10 @@ void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
+  Lift.setVelocity(100, percent);
+  IntakeMotor.setVelocity(100, percent);
+  ShootClose.setVelocity(100, percent);
+  ShootFar.setVelocity(100, percent);
 }
 
 //lift arm up task
@@ -214,13 +218,18 @@ int resetLiftIntake() {
   while(!(LimitSwitchIntake.pressing())) {
     Lift.spin(forward);
   }
-  Lift.stop(brake);
+  Lift.stop(hold);
 
   return 0;
 }
 
-
 void autonomous(void) {
+  setDrivePercentage(35);
+  Lift.setVelocity(100, percent);
+  IntakeMotor.setVelocity(100, percent);
+  ShootClose.setVelocity(100, percent);
+  ShootFar.setVelocity(100, percent);
+
   //initialize lift task
   task liftFarTask = task(resetLiftFar);
   liftFarTask.suspend();
@@ -270,9 +279,9 @@ void autonomous(void) {
   shootDiscs(10.5);
   wait(2.6, sec);
   IntakeMotor.spinFor(reverse, 500, degrees);
-  wait(0.2, sec);
+  wait(0.3, sec);
   IntakeMotor.spinFor(reverse, 650, degrees);
-  wait(0.2, sec);
+  wait(0.3, sec);
   IntakeMotor.spinFor(reverse, 950, degrees);
   stopDiscs();
 
@@ -401,134 +410,121 @@ void autonomous(void) {
   wait(1.27, sec);
   stopAll(brake);
   turnRightInertial(6);
+
+  setDrivePercentage(100);
 }
 
 void usercontrol(void) {
-
-double turnImportance = 0.5;
-
-  //initialize sensors and motor speeds
-  Lift.setPosition(0, degrees);
-  Inertial.resetHeading();
-  Inertial.resetRotation();
+  //set motors to 100%
   Lift.setVelocity(100, percent);
   IntakeMotor.setVelocity(100, percent);
+  ShootClose.setVelocity(100, percent);
+  ShootFar.setVelocity(100, percent);
+  setDrivePercentage(100);
 
-  //define tasks
-  liftArmFarTask = vex::task(liftArmFar);
-  liftArmFarTask.suspend();
-  liftArmIntakeTask = vex::task(liftArmIntake);
-  liftArmIntakeTask.suspend();
+  double turnImportance = 0.5;
 
- 
-  // place driver control in this while loop
-  while (true) {
+    //initialize sensors and motor speeds
+    Lift.setPosition(0, degrees);
+    Inertial.resetHeading();
+    Inertial.resetRotation();
+    Lift.setVelocity(100, percent);
+    IntakeMotor.setVelocity(100, percent);
 
-    /*
-    Brain.Screen.clearScreen();
-    Brain.Screen.printAt(1,40,"RPM:%f",ShootClose.velocity(vex::velocityUnits::rpm));
-    Brain.Screen.printAt(1,80,"RPM:%f",ShootFar.velocity(vex::velocityUnits::rpm));
-    Brain.Screen.printAt(1,120,"RPM:%f",IntakeMotor.velocity(vex::velocityUnits::rpm));\
-    Brain.Screen.render();
-    
-    Brain.Screen.setCursor(4, 1);
-    Brain.Screen.print(EncoderC.velocity(rpm));
-    Brain.Screen.setCursor(5, 1);
-    Brain.Screen.print(ShootClose.velocity(rpm));
-    Brain.Screen.setCursor(6, 1);
-    Brain.Screen.print(ShootFar.velocity(rpm));
-    */
-    double turnVal = Controller1.Axis4.position(percent);
-    double forwardVal = Controller1.Axis3.position(percent);
+    //define tasks
+    liftArmFarTask = vex::task(liftArmFar);
+    liftArmFarTask.suspend();
+    liftArmIntakeTask = vex::task(liftArmIntake);
+    liftArmIntakeTask.suspend();
 
-    double turnVolts = -(turnVal) * 0.12;
-    double forwardVolts = forwardVal * 0.12 * (1 - (std::abs(turnVolts)/12.0) * turnImportance);
+  
+    // place driver control in this while loop
+    while (true) {
+      double turnVal = Controller1.Axis4.position(percent);
+      double forwardVal = Controller1.Axis3.position(percent);
 
-    LFdrive.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-    LBdrive.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
-    RFdrive.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
-    RBdrive.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
+      double turnVolts = -(turnVal) * 0.12;
+      double forwardVolts = forwardVal * 0.12 * (1 - (std::abs(turnVolts)/12.0) * turnImportance);
 
-    //ControllerScreen.clearScreen();
-    //ControllerScreen.setCursor(0,0);
-    //ControllerScreen.print(Inertial.heading(degrees));
-    
-    
-    if (Controller1.ButtonL2.pressing()){ //in
-      IntakeMotor.spin(forward, 12.0 , voltageUnits::volt);
-    }
-    else if (Controller1.ButtonL1.pressing()){ //out
-      IntakeMotor.spin(forward, -12.0 , voltageUnits::volt);
-    }
-    else{
-      IntakeMotor.stop();
-    }
-    
-    //user shoot that prevents voltage dropoff
-    int r = 1800; //2100 --> 1800 --> 500 (target rpm)
-    int rpmPrev = 1800;
-    int temp = 1800;
-    //changed v from int to double
-    double v = 7.25; //6.25 --> 5.25
-    //user shoot
-    if (Controller1.ButtonR1.pressing()) {   
-      temp = r;
-      r = ShaftEncoderFlywheel.velocity(rpm);
-      rpmPrev = temp;
-      if(rpmPrev - r >= 70) {
-        v = 12;
+      LFdrive.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
+      LBdrive.spin(forward, forwardVolts + turnVolts, voltageUnits::volt);
+      RFdrive.spin(forward, forwardVolts - turnVolts, voltageUnits::volt);
+      RBdrive.spin(forward, forwardVolts - turnVolts, voltageUnits::volt); 
+      
+      if (Controller1.ButtonL2.pressing()){ //in
+        IntakeMotor.spin(forward, 12.0 , voltageUnits::volt);
+      }
+      else if (Controller1.ButtonL1.pressing()){ //out
+        IntakeMotor.spin(forward, -12.0 , voltageUnits::volt);
+      }
+      else{
+        IntakeMotor.stop();
+      }
+      
+      //user shoot that prevents voltage dropoff
+      int r = 1800; //2100 --> 1800 --> 500 (target rpm)
+      int rpmPrev = 1800;
+      int temp = 1800;
+      //changed v from int to double
+      double v = 10; //6.25 --> 5.25 --> 7.25 --> 10 -->
+      //user shoot
+      if (Controller1.ButtonR1.pressing()) {   
+        temp = r;
+        r = ShaftEncoderFlywheel.velocity(rpm);
+        rpmPrev = temp;
+        if(rpmPrev - r >= 70) {
+          v = 12;
+        }
+        ShootClose.spin(forward, 12, volt); //12 --> v --> 12
+        ShootFar.spin(forward, 12, volt); //12 --> v --> 12
+        v = v >= 7.25 ? v * .9 : 7.25;
         
       }
-      ShootClose.spin(forward, 12, volt); //7
-      ShootFar.spin(forward, 12, volt); //7
-      v = v >= 7.25 ? v * .9 : 7.25;
+      else {
+        ShootClose.stop(brake);
+        ShootFar.stop(brake);
+      }
+
+      //moving the lift 
+      //far
+      if (Controller1.ButtonB.pressing()) {
+        Lift.spin(reverse);
+      } 
+      else if (Controller1.ButtonY.pressing()) {
+        liftArmFarTask.resume();
+        if (liftArmFar() == 0) {
+          liftArmFarTask.suspend();
+        }
+      }
+      //intake
+      else if (Controller1.ButtonX.pressing()){
+        Lift.spin(forward);
+      } 
+      else if (Controller1.ButtonA.pressing()) {
+        liftArmIntakeTask.resume();
+        if (liftArmIntake() == 0) {
+          liftArmIntakeTask.suspend();
+        }
+      }
+      else {
+        Lift.stop(hold);
+      }
       
-    }
-    else {
-      ShootClose.stop(brake);
-      ShootFar.stop(brake);
-    }
-
-    //moving the lift 
-    //far
-    if (Controller1.ButtonB.pressing()) {
-      Lift.spin(reverse);
-    } 
-    else if (Controller1.ButtonY.pressing()) {
-      liftArmFarTask.resume();
-      if (liftArmFar() == 0) {
-        liftArmFarTask.suspend();
+      //distance shoot
+      if (Controller1.ButtonR2.pressing()) {
+        ShootClose.spin(forward, 12, volt);
+        ShootFar.spin(forward, 12, volt);
       }
-    }
-    //intake
-    else if (Controller1.ButtonX.pressing()){
-      Lift.spin(forward);
-    } 
-    else if (Controller1.ButtonA.pressing()) {
-      liftArmIntakeTask.resume();
-      if (liftArmIntake() == 0) {
-        liftArmIntakeTask.suspend();
+
+      //flywheel spins backwards to activate endgame
+      if (Controller1.ButtonUp.pressing()) {
+        ShootClose.spin(forward, -12, volt);
+        ShootFar.spin(forward, -12, volt);
       }
-    }
-    else {
-      Lift.stop(hold);
-    }
-    
-    //distance shoot
-    if (Controller1.ButtonR2.pressing()) {
-      ShootClose.spin(forward, 12, volt);
-      ShootFar.spin(forward, 12, volt);
-    }
 
-    //flywheel spins backwards to activate endgame
-    if (Controller1.ButtonUp.pressing()) {
-      ShootClose.spin(forward, -12, volt);
-      ShootFar.spin(forward, -12, volt);
+      wait(20, msec); // Sleep the task for a short amount of time to
+                      // prevent wasted resources.
     }
-
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
-  }
 }
 
 int main() {
