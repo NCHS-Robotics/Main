@@ -249,7 +249,7 @@ void autonomous(void) {
   //pick up corner disc and roll second roller
   driveAllFor(forward, 1250);
   IntakeMotor.spinFor(forward, 300, degrees);
-  turnRightInertial(91);
+  turnRightInertial(90);
   IntakeMotor.spin(reverse);
   driveAll(reverse);
   wait(1.5, sec);
@@ -290,6 +290,8 @@ void autonomous(void) {
   liftFarTask.suspend();
   liftIntakeTask.resume();
 
+  wait(0.2, sec);
+
   //pick up 3 discs in a row and shoot them
   driveAllFor(reverse, 1350);
   turnLeftInertial(126);
@@ -299,7 +301,7 @@ void autonomous(void) {
   IntakeMotor.stop(brake);
 
   turnRightInertial(66);
-  IntakeMotor.spinFor(forward, 100, degrees);
+  IntakeMotor.spinFor(forward, 200, degrees);
   shootDiscs(10.3);
   Lift.spin(reverse);
   wait(0.95, sec);
@@ -336,7 +338,7 @@ void autonomous(void) {
   Lift.stop(hold);
   stopAll(brake);
 
-  shootDiscs(8);
+  shootDiscs(8.15);
   wait(2.6, sec);
   IntakeMotor.spinFor(reverse, 500, degrees);
   wait(0.3, sec);
@@ -353,10 +355,18 @@ void autonomous(void) {
   wait(2.35, sec);
   stopAll(brake);
   
-  turnLeftInertial(80);
+  turnRightInertial(130);
+  shootDiscs(-12);
+
+  /*
+  IntakeMotor.spin(reverse);
+  shootDiscs(12);
 
   driveAll(reverse);
-  wait(1, sec);
+  wait(0.85, sec);
+  IntakeMotor.stop(brake);
+  stopDiscs();
+  wait(0.15, sec);
   stopAll(brake);
   IntakeMotor.spin(reverse);
   wait(0.3, sec);
@@ -412,6 +422,7 @@ void autonomous(void) {
   turnRightInertial(6);
 
   setDrivePercentage(100);
+  */
 }
 
 void usercontrol(void) {

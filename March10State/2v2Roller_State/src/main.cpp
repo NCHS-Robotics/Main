@@ -238,11 +238,11 @@ void autonomous(void) {
 
   //spin the roller
   driveAll(reverse);
-  wait(0.2, sec);
-  stopAll(brake);
+  wait(0.4, sec);
   IntakeMotor.spin(forward);
-  wait(0.16, sec);
+  wait(0.25, sec);
   IntakeMotor.stop(brake);
+  stopAll(brake);
 
   //liftIntakeTask.suspend();
   liftFarTask.resume();
@@ -254,10 +254,10 @@ void autonomous(void) {
   stopAll(brake);
   wait(0.15,sec);
 
-  turnLeftInertial(7);
-  wait(3.5, sec);
+  turnLeftInertial(7);  
+  wait(3.7, sec);
   IntakeMotor.spinFor(reverse, 500, degrees);
-  wait(1.5, sec);
+  wait(1.65, sec);
   IntakeMotor.spinFor(reverse, 950, degrees);
   stopDiscs();
 
@@ -265,17 +265,22 @@ void autonomous(void) {
   liftIntakeTask.resume();
 
   //turn and get discs
-  turnRightInertial(7);
+  //turnRightInertial(5);
+  /*
   driveAll(reverse);
   wait(0.35, sec);
   stopAll(brake);
-  turnLeftInertial(130);
+  */
+  /*
+  wait(0.2, sec);
+  turnLeftInertial(125);
 
   IntakeMotor.spin(reverse);
   wait(0.5, sec);
-  driveAllFor(reverse, 3000);
+  driveAllFor(reverse, 3400);
   wait(.25, sec);
-  IntakeMotor.stop(brake);
+  //IntakeMotor.stop(brake);
+  */
 }
 
 void usercontrol(void) {

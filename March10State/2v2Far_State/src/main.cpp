@@ -239,19 +239,20 @@ void autonomous(void) {
   driveAllFor(forward, 1500);
   turnLeftInertial(74);
   shootDiscs(12);
-  wait(3.75, sec);
+  wait(4.15, sec);
   IntakeMotor.spinFor(reverse, 500, degrees);
-  wait(1.35, sec);
+  wait(1.5, sec);
   IntakeMotor.spinFor(reverse, 950, degrees);
   stopDiscs();
 
   liftFarTask.suspend();
   liftIntakeTask.resume();
 
+  wait(0.2, sec);
   turnLeftInertial(6);
   IntakeMotor.spin(forward);
   driveAll(reverse);
-  wait(0.55, sec);//calibrate timing at state
+  wait(0.45, sec); //0.55 --> 0.45
   IntakeMotor.stop();
 
   driveAllFor(forward, 500);
